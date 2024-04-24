@@ -51,3 +51,69 @@ class MongoDBUnitopPipeline:
             return item
         except Exception as e:
             raise DropItem(f"Error inserting item: {e}")
+    
+import mysql.connector
+
+class MySQLNoDuplicatesPipeline:
+
+    def __init__(self):
+        self.conn = mysql.connector.connect(
+            host = 'localhost',
+            user = 'root',
+            password = '123456789',
+            database = 'unitop'
+        )
+
+        ## Create cursor, used to execute commands
+        self.cur = self.conn.cursor()
+        
+        ## Create quotes table if none exists
+        self.cur.execute("""
+        CREATE TABLE IF NOT EXISTS unitop(
+            id int NOT NULL auto_increment, 
+            courseURL text,
+            votenumber text,
+            rating text,
+            newfee text,
+            oldfee text,
+            lessonnum text,
+            PRIMARY KEY (id)
+        )
+        """)
+
+
+
+    def process_item(self, item, spider):
+
+        ## Check to see if courseURL is already in database 
+        self.cur.execute("select * from unitop where courseURL = %s", (item['courseURL'],))
+        result = self.cur.fetchone()
+
+        ## If it is in DB, create log message
+        if result:
+            spider.logger.warn("Item already in database: %s" % item['courseURL'])
+
+
+        ## If text isn't in the DB, insert data
+        else:
+
+            ## Define insert statement
+            self.cur.execute(""" insert into unitop (courseURL, votenumber, rating, newfee, oldfee, lessonnum) values (%s,%s,%s,%s,%s,%s)""", (
+                item["courseURL"],
+                item["votenumber"],
+                item["rating"],
+                item["newfee"],
+                item["oldfee"],
+                item["lessonnum"],
+            ))
+
+            ## Execute insert of data into database
+            self.conn.commit()
+        return item
+
+    
+    def close_spider(self, spider):
+
+        ## Close cursor & connection to database 
+        self.cur.close()
+        self.conn.close()

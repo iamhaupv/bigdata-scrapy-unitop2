@@ -67,6 +67,7 @@ ROBOTSTXT_OBEY = True
 ITEM_PIPELINES = {
    "PhamVanHauUnitop.pipelines.JsonDBUnitopPipeline": 300,
    "PhamVanHauUnitop.pipelines.MongoDBUnitopPipeline": 300,
+   "PhamVanHauUnitop.pipelines.MySQLNoDuplicatesPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
