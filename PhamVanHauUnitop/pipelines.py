@@ -117,3 +117,68 @@ class MySQLNoDuplicatesPipeline:
         ## Close cursor & connection to database 
         self.cur.close()
         self.conn.close()
+
+import psycopg2
+
+class PostgresNoDuplicatesPipeline:
+
+    def __init__(self):
+        ## Connection Details
+        hostname = 'localhost'
+        username = 'postgres'
+        password = '123456789'
+        database = 'unitop'
+
+        ## Create/Connect to database
+        self.connection = psycopg2.connect(host=hostname, user=username, password=password, dbname=database)
+        
+        ## Create cursor, used to execute commands
+        self.cur = self.connection.cursor()
+        
+        ## Create quotes table if none exists
+        self.cur.execute("""
+        CREATE TABLE IF NOT EXISTS unitop(
+            id serial PRIMARY KEY, 
+            courseURL text,
+            votenumber text,
+            rating text,
+            newfee text,
+            oldfee text,
+            lessonnum text
+        )
+        """)
+
+    def process_item(self, item, spider):
+
+        ## Check to see if text is already in database 
+        self.cur.execute("select * from unitop where courseURL = %s", (item['courseURL'],))
+        result = self.cur.fetchone()
+
+        ## If it is in DB, create log message
+        if result:
+            spider.logger.warn("Item already in database: %s" % item['courseURL'])
+
+
+        ## If text isn't in the DB, insert data
+        else:
+
+            ## Define insert statement
+            self.cur.execute(""" insert into unitop (courseURL, votenumber, rating, newfee, oldfee, lessonnum) values (%s,%s,%s,%s,%s,%s)""", (
+                item["courseURL"],
+                item["votenumber"],
+                item["rating"],
+                item["newfee"],
+                item["oldfee"],
+                item["lessonnum"],
+            ))
+
+            ## Execute insert of data into database
+            self.connection.commit()
+        return item
+
+    
+    def close_spider(self, spider):
+
+        ## Close cursor & connection to database 
+        self.cur.close()
+        self.connection.close()
