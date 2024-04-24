@@ -6,7 +6,9 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-
+# Cài đặt kết nối MongoDB
+MONGO_URI = 'mongodb+srv://phamvanhau692002vip:phamvanhau@cluster0.v9el5nr.mongodb.net/bigdata-unitop?retryWrites=true&w=majority&appName=Cluster0'
+MONGO_DATABASE = 'unitop'
 BOT_NAME = "PhamVanHauUnitop"
 
 SPIDER_MODULES = ["PhamVanHauUnitop.spiders"]
@@ -62,9 +64,10 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    "PhamVanHauUnitop.pipelines.PhamvanhauunitopPipeline": 300,
-#}
+ITEM_PIPELINES = {
+   "PhamVanHauUnitop.pipelines.JsonDBUnitopPipeline": 300,
+   "PhamVanHauUnitop.pipelines.MongoDBUnitopPipeline": 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -91,3 +94,6 @@ ROBOTSTXT_OBEY = True
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+
+FEED_FORMAT = "csv"
+FEED_URI = "phamvanhau.csv"
