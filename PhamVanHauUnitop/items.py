@@ -7,6 +7,9 @@ import scrapy
 
 
 class PhamvanhauunitopItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    courseURL = scrapy.Field()
+    votenumber = scrapy.Field()
+    rating = scrapy.Field()
+    newfee = scrapy.Field()
+    oldfee = scrapy.Field()
+    lessonnum = scrapy.Field()
