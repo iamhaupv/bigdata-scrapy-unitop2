@@ -69,6 +69,7 @@ ITEM_PIPELINES = {
    "PhamVanHauUnitop.pipelines.MongoDBUnitopPipeline": 300,
    "PhamVanHauUnitop.pipelines.MySQLNoDuplicatesPipeline": 300,
    "PhamVanHauUnitop.pipelines.PostgresNoDuplicatesPipeline": 300,
+   # "PhamVanHauUnitop.pipelines.CSVDBUnitopPipeline": 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

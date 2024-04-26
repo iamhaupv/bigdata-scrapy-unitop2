@@ -182,3 +182,38 @@ class PostgresNoDuplicatesPipeline:
         ## Close cursor & connection to database 
         self.cur.close()
         self.connection.close()
+
+import csv
+
+class CSVDBUnitopPipeline:
+    def __init__(self, csv_filename='output.csv'):
+        self.csv_filename = csv_filename
+        self.csv_file = None
+        self.csv_writer = None
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(
+            csv_filename=crawler.settings.get('CSV_FILENAME', 'output.csv')
+        )
+
+    def open_spider(self, spider):
+        self.csv_file = open(self.csv_filename, 'w', newline='', encoding='utf-8')
+        self.csv_writer = csv.writer(self.csv_file, delimiter='$')
+
+    def close_spider(self, spider):
+        if self.csv_file:
+            self.csv_file.close()
+
+    def process_item(self, item, spider):
+        # Lấy các trường thông tin từ mục
+        courseURL = item.get('courseURL', '')
+        votenumber = item.get('votenumber', '')
+        rating = item.get('rating', '')
+        newfee = item.get('newfee', '')
+        oldfee = item.get('oldfee', '')
+        lessonnum = item.get('lessonnum', '')
+        # Ghi thông tin vào tệp CSV
+        self.csv_writer.writerow([courseURL, votenumber, rating, newfee, oldfee, lessonnum])
+
+        return item
