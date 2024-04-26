@@ -14,4 +14,12 @@ https://unitop.vn/
 <br/>
 <img src='https://i.imgur.com/DUw5FTz.png'/>
 <br/>
+fix postgres 
+<br/>
+SHOW server_encoding;
+<br/>
+SET client_encoding TO 'UTF8';
+<br/>
+psql -U postgres -d unitop
+<br/>
 <img src='https://i.imgur.com/huMaHza.png'/>
